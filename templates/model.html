@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model & Metodologi - Bitcast</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom animations and effects (Copied from existing CSS for consistency) */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .floating-crypto {
+      position: fixed;
+      pointer-events: none;
+      font-size: 24px;
+      opacity: 0.1;
+      z-index: 1;
+      animation: float-crypto 15s ease-in-out infinite;
+    }
+
+    @keyframes float-crypto {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+
+    /* Card styling for methodologies */
+    .method-card {
+      background: rgba(255, 255, 255, 0.08); /* Slightly brighter for content cards */
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .method-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .section-title {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .text-gradient-purple-blue {
+        background: linear-gradient(45deg, #a855f7, #6366f1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .crypto-icon {
+      display: inline-block;
+      font-size: 20px;
+      margin: 0 5px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    /* Navbar hover effects */
+    .nav-link {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: currentColor;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-x-hidden">
+
+  <div class="floating-crypto" style="top: 10%; left: 5%;">₿</div>
+  <div class="floating-crypto" style="top: 20%; right: 10%; animation-delay: -2s;">Ξ</div>
+  <div class="floating-crypto" style="top: 60%; left: 8%; animation-delay: -4s;">₮</div>
+  <div class="floating-crypto" style="bottom: 30%; right: 5%; animation-delay: -6s;">♦</div>
+  <div class="floating-crypto" style="bottom: 10%; left: 15%; animation-delay: -8s;">₳</div>
+
+  <header class="bg-black/20 backdrop-blur-lg shadow-xl sticky top-0 z-50 border-b border-white/10">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <div class="nav-link">
+          <a href="/" class="no-underline">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
+              ₿ITCAST
+            </h1>
+          </a>
+        </div>
+
+        <nav class="hidden md:flex space-x-8 text-gray-300 font-medium">
+          <a href="/exchange" class="nav-link hover:text-yellow-400 transition duration-300 px-2 py-1">
+            Exchange
+          </a>
+          <a href="/prediksi" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            Prediksi
+          </a>
+          <a href="#" class="nav-link hover:text-purple-400 transition duration-300 px-2 py-1">
+            Model & Metodologi
+          </a>
+          <a href="/tentang" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            About
+          </a>
+          
+        </nav>
+
+        <button class="md:hidden text-white p-2" onclick="toggleMobileMenu()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <nav id="mobileMenu" class="md:hidden mt-4 space-y-2 hidden bg-black/40 backdrop-blur-lg rounded-lg p-4 border border-white/10">
+        <a href="/exchange" class="block text-gray-300 hover:text-yellow-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>💱</span>
+            <span>Exchange</span>
+          </span>
+        </a>
+        <a href="/prediksi" class="block text-gray-300 hover:text-pink-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🔮</span>
+            <span>Prediksi</span>
+          </span>
+        </a>
+        <a href="/model" class="block text-gray-300 hover:text-purple-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+            <span class="flex items-center space-x-2">
+              <span>🧠</span>
+              <span>Model & Metodologi</span>
+            </span>
+          </a>
+        <a href="/tentang" class="block text-gray-300 hover:text-blue-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>ℹ️</span>
+            <span>About</span>
+          </span>
+        </a>
+        
+      </nav>
+    </div>
+  </header>
+
+  <section class="pt-12 pb-20 relative z-10"> <div class="container mx-auto text-center relative z-10">
+    <h2 class="text-4xl md:text-6xl font-bold mb-6 flex items-center justify-center" style="line-height: 1.1;">
+      <span class="section-title">
+        Model & Metodologi Prediksi
+      </span>
+      <span class="ml-4 text-5xl md:text-6xl animate-bounce">🧠</span> </h2>
+      <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+      Jelajahi kerangka kerja ilmiah di balik akurasi prediksi Bitcast</strong>
+      <span class="ml-2 text-3xl inline-block" style="line-height: 1.2;">📊</span> </p>
+  </div>
+</section>
+
+  <section class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto text-center mb-12">
+        <h3 class="text-4xl font-bold text-gradient-purple-blue mb-6">Pendekatan Kami</h3>
+        <p class="text-lg text-gray-300">
+          Di Bitcast, kami berkomitmen untuk memberikan prediksi pasar kripto yang paling akurat dan andal. Kami menggabungkan <strong class="text-white">penelitian mutakhir</strong> dalam kecerdasan buatan dan pembelajaran mesin dengan <strong class="text-white">analisis data pasar yang mendalam</strong> untuk mengembangkan model prediksi yang mampu menavigasi volatilitas pasar kripto.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <img src="{{ url_for('static', filename='image/fold 1.jpeg') }}" alt="Ilustrasi Bitcast" class="mx-auto mb-6 rounded-xl shadow-lg w-full max-w-lg">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Fold 1 (t+12)</h4>
+          <p class="text-gray-300 mb-4">
+            Model berhasil menangkap pola utama, meskipun terlihat adanya keterlambatan prediksi terhadap lonjakan harga tinggi. Prediksi cenderung lagging saat terjadi volatilitas ekstrem, namun masih dapat menangkap pola pergerakan data.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>MAE: 0.0062</li>
+            <li>RMSE: 0.0076</li>
+            <li>MSE: 5.8497e-05</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <img src="{{ url_for('static', filename='image/fold 2.jpeg') }}" alt="Ilustrasi Bitcast" class="mx-auto mb-6 rounded-xl shadow-lg w-full max-w-lg">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Fold 2 (t+12)</h4>
+          <p class="text-gray-300 mb-4">
+            Ketepatan tinggi terlihat dalam fase penurunan harga. Model mengikuti arah tren dengan deviasi kecil, terutama saat harga bergerak stabil. Di bagian akhir, prediksi cukup responsif terhadap kenaikan tajam meskipun sedikit tertinggal.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>MAE: 0.0054</li>
+            <li>RMSE: 0.0065</li>
+            <li>MSE: 4.2327e-05</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <img src="{{ url_for('static', filename='image/fold 3.jpeg') }}" alt="Ilustrasi Bitcast" class="mx-auto mb-6 rounded-xl shadow-lg w-full max-w-lg">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Fold 3 (t+12)</h4>
+          <p class="text-gray-300 mb-4">
+            Model menangkap dinamika harga dengan baik sepanjang rentang waktu. Fluktuasi harga aktual direproduksi dengan akurasi tinggi, termasuk puncak dan lembah. Hasil ini menunjukkan bahwa model mampu mempertahankan presisi pada data dengan banyak pola berulang.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>MAE: 0.0062</li>
+            <li>RMSE: 0.0086</li>
+            <li>MSE: 7.3187e-05</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <img src="{{ url_for('static', filename='image/fold 4.jpeg') }}" alt="Ilustrasi Bitcast" class="mx-auto mb-6 rounded-xl shadow-lg w-full max-w-lg">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Fold 4 (t+12)</h4>
+          <p class="text-gray-300 mb-4">
+            Tren harga berhasil ditiru, meskipun prediksi cenderung sedikit tertinggal saat terjadi penurunan tajam. Setelah koreksi, model kembali selaras dengan data aktual. Ini menunjukkan kemampuan adaptasi model terhadap perubahan arah tren.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>MAE: 0.0044</li>
+            <li>RMSE: 0.0065</li>
+            <li>MAE: 4.2870e-05</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <img src="{{ url_for('static', filename='image/fold 5.jpeg') }}" alt="Ilustrasi Bitcast" class="mx-auto mb-6 rounded-xl shadow-lg w-full max-w-lg">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Fold 5 (t+12)</h4>
+          <p class="text-gray-300 mb-4">
+            Prediksi mengikuti arah tren umum namun tampil lebih halus dibanding data aktual. Lonjakan harga tinggi tidak tertangkap sepenuhnya, mengindikasikan bahwa model sedikit underfit terhadap variasi ekstrem. Namun, kecenderungan jangka panjang tetap terjaga.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>MAE: 0.0231</li>
+            <li>RMSE: 0.0403</li>
+            <li>MAE: 1.6203e-03</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <img src="{{ url_for('static', filename='image/fold 6.jpeg') }}" alt="Ilustrasi Bitcast" class="mx-auto mb-6 rounded-xl shadow-lg w-full max-w-lg">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Fold 6 (t+12)</h4>
+          <p class="text-gray-300 mb-4">
+            Prediksi cukup halus dan kurang responsif terhadap puncak dan lembah tajam, terutama pada fase awal. Hal ini mengindikasikan smoothing semacam ini mungkin berasal dari dropout tinggi atau regularisasi.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>MAE: 0.0219</li>
+            <li>RMSE: 0.0282</li>
+            <li>MAE: 7.9326e-04</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <img src="{{ url_for('static', filename='image/fold 7.jpeg') }}" alt="Ilustrasi Bitcast" class="mx-auto mb-6 rounded-xl shadow-lg w-full max-w-lg">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Fold 7 (t+12)</h4>
+          <p class="text-gray-300 mb-4">
+            Model berhasil menangkap pola naik-turun harga dengan baik hingga akhir sekuens. Namun, sedikit keterlambatan (lag) prediksi terlihat pada beberapa lonjakan tajam.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>MAE: 0.0284</li>
+            <li>RMSE: 0.0376</li>
+            <li>MAE: 1.4119e-03</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <img src="{{ url_for('static', filename='image/fold 8.jpeg') }}" alt="Ilustrasi Bitcast" class="mx-auto mb-6 rounded-xl shadow-lg w-full max-w-lg">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Fold 8 (t+12)</h4>
+          <p class="text-gray-300 mb-4">
+            Prediksi mengikuti tren aktual dengan sangat baik, terutama pada fase penurunan harga. Fluktuasi jangka pendek juga ditangkap cukup baik, menunjukkan kestabilan model pada horizon 12 langkah.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>MAE: 0.0147</li>
+            <li>RMSE: 0.0202</li>
+            <li>MAE: 4.0737e-04</li>
+          </ul>
+        </div>
+        
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <img src="{{ url_for('static', filename='image/fold 9.jpeg') }}" alt="Ilustrasi Bitcast" class="mx-auto mb-6 rounded-xl shadow-lg w-full max-w-lg">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Fold 9 (t+12)</h4>
+          <p class="text-gray-300 mb-4">
+            Prediksi dengan kecenderungan mengikuti arah dan pola pergerakan harga, termasuk titik balik utama. Namun, terdapat sedikit overshoot pada beberapa puncak akibat prediksi yang lebih agresif.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>MAE: 0.0095</li>
+            <li>RMSE: 0.0142</li>
+            <li>MAE: 2.0255e-04</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <img src="{{ url_for('static', filename='image/fold 10.jpeg') }}" alt="Ilustrasi Bitcast" class="mx-auto mb-6 rounded-xl shadow-lg w-full max-w-lg">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Fold 10 (t+12)</h4>
+          <p class="text-gray-300 mb-4">
+            Prediksi sangat mengikuti gerakan aktual, termasuk lonjakan tajam di akhir, artinya ada generalisasi yang sangat baik. Model tampak sensitif terhadap perubahan tren, tanpa banyak noise.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>MAE: 0.0083</li>
+            <li>RMSE: 0.0123</li>
+            <li>MAE: 1.5195e-04</li>
+          </ul>
+        </div>
+      
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Step 1: Data Collection & Preprocessing</h4>
+          <p class="text-gray-300 mb-4">
+            Kami mengumpulkan data historis harga dan volume kripto dari berbagai bursa global seperti Binance dan CoinGecko. Data meliputi 9 fitur terpilih (Close, RSI, OBV, dll.) dan direkam secara menit, jam, dan harian. Proses pra-pemrosesan meliputi interpolasi untuk data hilang, normalisasi Min-Max, serta deteksi dan pembersihan outlier, menghasilkan dataset bersih sepanjang 258 timestep (≈43 hari) untuk setiap fitur.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>Bursa: Binance, CoinGecko</li>
+            <li>Resolusi: Menit, Jam, Harian</li>
+            <li>Fitur: Close, RSI, OBV, dan 6 lainnya</li>
+            <li>Pra-pemrosesan: Interpolasi, Min-Max Scaling, Outlier Removal</li>
+            <li>Shape akhir: 258 × 9</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Step 2: Model Architecture</h4>
+          <p class="text-gray-300 mb-4">
+            Prediksi dilakukan menggunakan arsitektur Long Short-Term Memory (LSTM) yang dioptimalkan khusus untuk data deret waktu. Model terdiri dari dua layer LSTM berukuran 528 dan 256 neuron, masing-masing dilengkapi dropout 0.4 untuk menghindari overfitting. Layer output berupa Dense (12 unit) untuk memprediksi 12 langkah ke depan sekaligus (t+1 hingga t+12).
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>LSTM 1 (528) &rarr; Dropout(0.4)</li>
+            <li>LSTM 2 (256) &rarr; Dropout(0.4)</li>
+            <li>Dense(12) [output t+1 sampai t+12]</li>
+            <li>Optimizer: Adam (lr=1e-3)</li>
+            <li>Loss: Mean Squared Error (MSE)</li>
+            <li>Regularisasi: EarlyStopping & ReduceLROnPlateau</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Step 3: Feature Engineering & Indicators</h4>
+          <p class="text-gray-300 mb-4">
+            Selain harga penutupan, kami mengintegrasikan 9 indikator teknis terpilih seperti RSI, OBV, MACD, Bollinger Bands, Moving Averages, serta fitur volatilitas (ATR, deviasi standar historis). Fitur-fitur ini memperkuat kemampuan model dalam menangkap pola dan tren dinamis pada pasar kripto.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>Indikator: Close, RSI, OBV, MACD, Bollinger Bands, MA, ATR, dll.</li>
+            <li>Fitur volatilitas: ATR, standar deviasi historis</li>
+            <li>Pemilihan fitur: Hanya 9 fitur terbaik</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">Step 4: Model Training & Validation</h4>
+          <p class="text-gray-300 mb-4">
+            Model dilatih pada batch 128, maksimal 300 epoch, menggunakan strategi EarlyStopping dan pengaturan learning rate dinamis untuk hasil optimal. Validasi ketat dilakukan dengan 10-fold TimeSeriesSplit (cross-validation), memastikan generalisasi model di kondisi pasar nyata. Evaluasi menggunakan MAE, RMSE, dan monitoring tren prediksi vs aktual secara detail.
+          </p>
+          <ul class="list-disc list-inside text-gray-400 text-sm">
+            <li>Batch size: 128, Epoch max: 300</li>
+            <li>Cross-validation: 10-fold TimeSeriesSplit</li>
+            <li>Metrik evaluasi: MAE, RMSE</li>
+            <li>Monitoring: EarlyStopping, ReduceLROnPlateau</li>
+          </ul>
+        </div>
+
+        <div class="method-card p-8 rounded-2xl shadow-xl col-span-1 md:col-span-2">
+          <h4 class="text-2xl font-semibold text-gradient-purple-blue mb-4">
+            Faktor Eksternal & Sentimen: Dampak Besar pada Harga Bitcoin
+          </h4>
+          <p class="text-gray-300 mb-6 ">
+            Berikut adalah contoh peristiwa utama global yang terbukti memicu volatilitas dan deviasi prediksi harga Bitcoin di periode 2024–2025:
+          </p>
+          <div class="text-left">
+            <ul class="list-disc list-inside text-gray-400 text-sm space-y-2">
+              <li>
+                <b>10 Jan 2024:</b> SEC AS menyetujui ETF spot Bitcoin – harga reli karena antisipasi investasi institusional baru.
+              </li>
+              <li>
+                <b>11 Jan 2024:</b> ETF spot mulai diperdagangkan – harga sempat menyentuh $49.000 (tertinggi 19 bulan).
+              </li>
+              <li>
+                <b>23 Jan 2024:</b> Bitcoin anjlok di bawah $39.000 akibat aksi <i>sell-the-news</i> dan penjualan aset FTX.
+              </li>
+              <li>
+                <b>13 Apr 2024:</b> Eskalasi konflik Israel–Iran – Bitcoin turun ~8% karena risiko geopolitik.
+              </li>
+              <li>
+                <b>20 Apr 2024:</b> Halving Bitcoin 2024 – suplai Bitcoin baru berkurang, dampak harga jangka pendek tak selalu pasti.
+              </li>
+              <li>
+                <b>8 Nov 2024:</b> Pilpres AS (Trump menang) – optimisme regulasi ramah kripto, bullish sentiment naik.
+              </li>
+              <li>
+                <b>31 Des 2024:</b> Bitcoin tembus $100.000 – puncak reli (+120% YoY) didorong ETF spot & euforia institusional.
+              </li>
+              <li>
+                <b>16 Apr 2025:</b> Statement hawkish Fed (Powell) – peringatan stagflasi, harga turun ~2,5% secara instan.
+              </li>
+              <li>
+                <b>16 Jun 2025:</b> MicroStrategy membeli 10.001 BTC (~$1 miliar) – adopsi korporasi, permintaan institusional.
+              </li>
+              <li>
+                <b>17 Jun 2025:</b> Senat AS setujui RUU Stablecoin – kepastian hukum baru untuk industri kripto.
+              </li>
+              <li>
+                <b>23 Jun 2025:</b> Serangan AS ke situs nuklir Iran – risiko geopolitik, harga Bitcoin turun ke $98.286 sebelum pulih.
+              </li>
+            </ul>
+          </div>
+          <p class="text-sm text-gray-400 italic mt-8 ">
+            <span class="font-semibold text-white">Catatan:</span>
+            Ketidakakuratan pola atau prediksi harga Bitcoin umumnya terjadi akibat efek sentimen, berita, peristiwa geopolitik seperti perang, atau faktor eksternal lain yang <b>tidak dapat diprediksi oleh model Bitcast.</b>
+          </p>
+        </div>
+
+
+
+
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 text-center">
+    <p class="text-lg text-gray-300">
+      Ingin tahu lebih banyak tentang teknologi di balik Bitcast?
+    </p>
+    <a href="/tentang" class="inline-block mt-4 px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300">
+      Hubungi Kami
+    </a>
+  </section>
+  <footer class="bg-black/20 border-t border-white/10 py-8 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-gray-400">© 2025 Bitcast. Prediksi cryptocurrency dengan AI.</p>
+    </div>
+  </footer>
+
+
+  <script>
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

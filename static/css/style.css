@@ -1,0 +1,13 @@
+/* static/css/style.css */
+
+/* Fade in effect */
+.fade-in {
+  animation: fadeIn 1s ease-in-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}

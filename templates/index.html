@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitcast - Prediksi Harga Bitcoin Akurat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .floating-crypto {
+      position: fixed;
+      pointer-events: none;
+      font-size: 24px;
+      opacity: 0.1;
+      z-index: 1;
+      animation: float-crypto 15s ease-in-out infinite;
+    }
+    @keyframes float-crypto {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+
+    /* Base Card Styling for consistency across sections */
+    .base-card {
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.05); /* Softer background */
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 1rem; /* Consistent border-radius */
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .base-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+      border-color: rgba(168, 85, 247, 0.5); /* Highlight on hover */
+    }
+    .base-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); /* Subtle shine effect */
+      transition: left 0.5s ease;
+    }
+    .base-card:hover::before { left: 100%; }
+
+    .skill-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white; border-radius: 20px;
+      font-size: 12px; margin: 2px;
+      opacity: 0; transform: translateY(20px);
+      animation: slideInUp 0.6s ease forwards;
+    }
+    @keyframes slideInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .crypto-icon {
+      display: inline-block;
+      font-size: 20px; margin: 0 5px;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    .section-title {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .text-gradient-primary {
+        background: linear-gradient(45deg, #a855f7, #6366f1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Navbar hover effects */
+    .nav-link { position: relative; overflow: hidden; }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 2px; background: currentColor;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+      .floating-crypto { font-size: 18px; }
+      .text-5xl { font-size: 2.5rem; }
+      .text-4xl { font-size: 2rem; }
+    }
+
+    /* Methodology Card specific styles */
+    .methodology-card {
+      transition: all 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+      min-height: 260px; /* Ensures consistent height before expansion */
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      text-align: center;
+      box-sizing: border-box; /* Include padding in element's total width and height */
+    }
+
+    .methodology-card-title {
+      font-size: 1.5rem; /* text-2xl */
+      font-weight: 600; /* font-semibold */
+      margin-bottom: 1rem; /* mb-4 */
+    }
+
+    .methodology-card-description {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transform: translateY(20px);
+      transition: all 0.5s ease-out;
+      text-align: left;
+      font-size: 0.95rem;
+      color: #cbd5e1; /* text-gray-300 */
+    }
+
+    .methodology-card.active .methodology-card-description {
+      opacity: 1;
+      max-height: 250px; /* Increased max-height for more content */
+      transform: translateY(0);
+      transition-delay: 0.1s;
+      margin-top: 1rem; /* Add space when description appears */
+    }
+
+    .methodology-card.active {
+      flex: 2 1 0%; /* Expands active card */
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); /* More pronounced shadow */
+      border-color: rgba(168, 85, 247, 0.8); /* Stronger highlight for active */
+      cursor: default; /* Indicate it's expanded */
+    }
+
+    /* Group hover effect for methodology cards (blur and scale on others) */
+    .methodology-group:hover .methodology-card:not(.active) {
+      opacity: 0.6;
+      filter: blur(1px);
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-x-hidden">
+
+  <div class="floating-crypto" style="top: 10%; left: 5%;">₿</div>
+  <div class="floating-crypto" style="top: 20%; right: 10%; animation-delay: -2s;">Ξ</div>
+  <div class="floating-crypto" style="top: 60%; left: 8%; animation-delay: -4s;">₮</div>
+  <div class="floating-crypto" style="bottom: 30%; right: 5%; animation-delay: -6s;">♦</div>
+  <div class="floating-crypto" style="bottom: 10%; left: 15%; animation-delay: -8s;">₳</div>
+  <div class="floating-crypto" style="top: 50%; left: 30%; animation-delay: -6s;">$</div>
+
+  <header class="bg-black/20 backdrop-blur-lg shadow-xl sticky top-0 z-50 border-b border-white/10">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <div class="nav-link">
+          <a href="/" class="no-underline">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
+              ₿ITCAST
+            </h1>
+          </a>
+        </div>
+
+        <nav class="hidden md:flex space-x-8 text-gray-300 font-medium">
+          <a href="/exchange" class="nav-link hover:text-yellow-400 transition duration-300 px-2 py-1">
+            Exchange
+          </a>
+          <a href="/prediksi" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            Prediksi
+          </a>
+          <a href="/model" class="nav-link hover:text-purple-400 transition duration-300 px-2 py-1">
+            Model & Metodologi
+          </a>
+          <a href="/tentang" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            About
+          </a>
+        </nav>
+
+        <button class="md:hidden text-white p-2" onclick="toggleMobileMenu()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <nav id="mobileMenu" class="md:hidden mt-4 space-y-2 hidden bg-black/40 backdrop-blur-lg rounded-lg p-4 border border-white/10">
+        <a href="/exchange" class="block text-gray-300 hover:text-yellow-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>💱</span>
+            <span>Exchange</span>
+          </span>
+        </a>
+        <a href="/prediksi" class="block text-gray-300 hover:text-pink-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🔮</span>
+            <span>Prediksi</span>
+          </span>
+        </a>
+        <a href="/model" class="block text-gray-300 hover:text-purple-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🧠</span>
+            <span>Model & Metodologi</span>
+          </span>
+        </a>
+        <a href="/tentang" class="block text-gray-300 hover:text-blue-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>ℹ️</span>
+            <span>About</span>
+          </span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="py-24 text-center relative z-10"> <div class="container mx-auto px-4">
+    <h2 class="text-4xl md:text-6xl font-bold mb-6 flex items-center justify-center leading-relaxed">
+      <span class="bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500 bg-clip-text text-transparent leading-relaxed">
+        Selamat Datang di Masa Depan Prediksi Aset Digital
+      </span>
+      <span class="ml-4 text-5xl md:text-6xl animate-pulse"></span> </h2>
+    <p class="text-lg md:text-xl mb-8 text-gray-300 max-w-2xl mx-auto">
+      Dapatkan prediksi harga aset Bitcoin yang <strong class="text-white">cepat</strong> dengan teknologi <strong class="text-white">AI terdepan</strong> untuk keputusan investasi cerdas Anda.
+    </p>
+    <div class="space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center">
+      <a href="/prediksi" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300 w-full md:w-auto inline-block text-center">
+        Mulai Prediksi Sekarang
+      </a>
+      <a href="/exchange" class="border-2 border-white/30 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition-all duration-300 w-full md:w-auto inline-block text-center">
+        Cek Nilai Tukar
+      </a>
+    </div>
+  </div>
+</section>
+
+  <section id="fitur" class="py-20">
+    <div class="container mx-auto px-4">
+      <h3 class="text-3xl md:text-4xl font-bold text-center mb-4">
+        <span class="section-title">🌟 Fitur Unggulan Bitcast</span>
+      </h3>
+      <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+        Teknologi canggih yang memberikan Anda keunggulan dalam analisis dan prediksi cryptocurrency.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="base-card p-8 rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-300">
+          <div class="text-4xl mb-4">⚡</div>
+          <h4 class="text-xl font-semibold mb-4 text-yellow-400">Prediksi Akurat Berbasis AI</h4>
+          <p class="text-gray-300 leading-relaxed">
+            Menggunakan algoritma AI dan machine learning untuk memberikan prediksi harga aset kripto yang cepat dan akurat berdasarkan analisis data real-time.
+          </p>
+        </div>
+        <div class="base-card p-8 rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-300">
+          <div class="text-4xl mb-4">📊</div>
+          <h4 class="text-xl font-semibold mb-4 text-pink-400">Analisis Pasar Mendalam</h4>
+          <p class="text-gray-300 leading-relaxed">
+            Melakukan analisis komprehensif berdasarkan data pasar, tren historis, dan indikator teknis untuk memberikan wawasan investasi yang lebih baik.
+          </p>
+        </div>
+        <div class="base-card p-8 rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-300">
+          <div class="text-4xl mb-4">📈</div>
+          <h4 class="text-xl font-semibold mb-4 text-green-400">Data Real-Time & Historis</h4>
+          <p class="text-gray-300 leading-relaxed">
+            Akses data pasar cryptocurrency secara real-time dan data historis yang lengkap dari berbagai exchange terpercaya untuk keputusan tepat waktu.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="about" class="py-20">
+    <div class="container mx-auto px-4">
+      <h3 class="text-3xl md:text-4xl font-bold text-center mb-4">
+        <span class="section-title">Tentang Bitcast</span>
+      </h3>
+      <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+        Misi kami adalah memberdayakan Anda dengan alat terbaik untuk menavigasi pasar kripto.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+        <div class="flex justify-center order-2 md:order-1">
+          <img
+            src="/static/image/bitcoin-index.jpg"
+            alt="Crypto Analytics"
+            class="rounded-2xl shadow-lg w-full max-w-md object-cover border border-white/10"
+          />
+        </div>
+        <div class="order-1 md:order-2">
+          <h4 class="text-xl md:text-2xl font-semibold mb-4 text-white">Wawasan Pasar Terdepan</h4>
+          <p class="text-gray-300 leading-relaxed mb-6", style="text-align: justify;">
+            Bitcast adalah platform inovatif yang dirancang untuk memberikan keunggulan kepada investor kripto. Dengan memanfaatkan kombinasi powerful antara kecerdasan buatan, pembelajaran mesin, dan analisis data mendalam, kami menyajikan prediksi harga yang akurat dan wawasan pasar yang dapat Anda andalkan. Kami percaya bahwa setiap investor, dari pemula hingga ahli, berhak mendapatkan akses ke informasi berkualitas tinggi untuk membuat keputusan yang terinformasi di pasar kripto yang dinamis.
+          </p>
+          <a href="/model" class="inline-block bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium px-6 py-2 rounded-lg shadow-md hover:from-purple-600 hover:to-pink-600 transition">
+            Pelajari Lebih Lanjut
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="model-metodologi" class="py-20">
+    <div class="container mx-auto px-4">
+      <h3 class="text-3xl md:text-4xl font-bold text-center mb-4">
+        <span class="section-title">🔬 Model & Metodologi Prediksi Kami</span>
+      </h3>
+      <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto" >
+        Pahami cara Bitcast menghasilkan prediksi akurat dengan detail di balik teknologi kami. Klik kartu untuk melihat lebih banyak!
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 methodology-group">
+        <div class="methodology-card base-card rounded-2xl shadow-xl" onclick="toggleMethodologyCard(this)">
+          <div class="text-4xl mb-4 text-yellow-400">🧠</div>
+          <h4 class="methodology-card-title text-yellow-400">LSTM Networks</h4>
+          <p class="methodology-card-description text-gray-300",  style="text-align: justify;">
+            Kami menggunakan LSTM untuk menganalisis tren harga historis, volume perdagangan, dan indikator teknis, memungkinkan model untuk "belajar" dari pergerakan pasar masa lalu dan memproyeksikan pergerakan di masa depan dengan akurasi tinggi.
+          </p>
+        </div>
+
+        <div class="methodology-card base-card rounded-2xl shadow-xl" onclick="toggleMethodologyCard(this)">
+          <div class="text-4xl mb-4 text-pink-400">📥</div>
+          <h4 class="methodology-card-title text-pink-400">Data</h4>
+          <p class="methodology-card-description text-gray-300",  style="text-align: justify;">     
+            Akurasi prediksi dimulai dari data berkualitas tinggi. Kami mengumpulkan data historis (harga, volume, buku pesanan) dari bursa kripto terkemuka secara real-time.
+          </p>
+        </div>
+
+        <div class="methodology-card base-card rounded-2xl shadow-xl" onclick="toggleMethodologyCard(this)">
+          <div class="text-4xl mb-4 text-green-400">⚙️</div>
+          <h4 class="methodology-card-title text-green-400">Rekayasa Fitur & Validasi</h4>
+          <p class="methodology-card-description text-gray-300",  style="text-align: justify;">
+            Untuk meningkatkan kecerdasan model, kami melakukan rekayasa fitur dengan membuat variabel baru dari data mentah, seperti indikator teknis (RSI, MACD, Bollinger Bands) dan metrik volatilitas. Ini membantu model memahami konteks pasar yang lebih kaya.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-black/20 border-t border-white/10 py-8 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-gray-400">© 2025 Bitcast. Prediksi cryptocurrency dengan AI.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+      var menu = document.getElementById("mobileMenu");
+      menu.classList.toggle("hidden");
+    }
+
+    // Methodology Card Interaction (Accordion-like)
+    function toggleMethodologyCard(clickedCard) {
+      const allCards = document.querySelectorAll('.methodology-card');
+
+      // Check if the clicked card is already active
+      const wasActive = clickedCard.classList.contains('active');
+
+      // Deactivate all cards first
+      allCards.forEach(card => {
+        card.classList.remove('active');
+        card.style.flex = "1 1 0%"; // Reset flex basis for all
+      });
+
+      // If the clicked card was NOT active, activate it
+      if (!wasActive) {
+        clickedCard.classList.add('active');
+        clickedCard.style.flex = "2 1 0%"; // Expand the clicked card
+      }
+      // If it WAS active, it's now deactivated and others are reset.
+      const modelSection = document.getElementById("model-metodologi");
+
+      if (modelSection) {
+        let hasScrolled = false;
+
+        modelSection.addEventListener("mouseenter", () => {
+          if (!hasScrolled) {
+            modelSection.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+            hasScrolled = true;
+
+            // Reset scroll permission setelah beberapa detik agar bisa scroll ulang
+            setTimeout(() => {
+              hasScrolled = false;
+            }, 2000);
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>

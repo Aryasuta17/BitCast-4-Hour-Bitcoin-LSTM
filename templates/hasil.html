@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Hasil Prediksi {{ symbol }} – CryptoPrediction</title>
+
+  <!-- Tailwind & Chart.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+  <!-- Google font & styles -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    body{font-family:'Inter',sans-serif}
+    
+    .prediction-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .prediction-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+    
+    .section-title {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 400px;
+      width: 100%;
+    }
+    
+    .chart-toggle {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .chart-toggle:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .chart-toggle.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .price-indicator {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+    
+    .price-up {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid #10b981;
+    }
+    
+    .price-down {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+    
+    .price-neutral {
+      background: rgba(156, 163, 175, 0.2);
+      color: #9ca3af;
+      border: 1px solid #9ca3af;
+    }
+    
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    
+        /* Stagger animation delays */
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in:nth-child(4) { animation-delay: 0.4s; }
+
+    /* Navbar hover effects */
+    .nav-link {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: currentColor;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .pulse-dot {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .back-button {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(-2px);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-x-hidden">
+
+  <header class="bg-black/20 backdrop-blur-lg shadow-xl sticky top-0 z-50 border-b border-white/10">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <div class="nav-link">
+          <a href="/" class="no-underline">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
+              ₿ITCAST
+            </h1>
+          </a>
+        </div>
+
+        <nav class="hidden md:flex space-x-8 text-gray-300 font-medium">
+          <a href="/exchange" class="nav-link hover:text-yellow-400 transition duration-300 px-2 py-1">
+            Exchange
+          </a>
+          <a href="/prediksi" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            Prediksi
+          </a>
+          <a href="/model" class="nav-link hover:text-purple-400 transition duration-300 px-2 py-1">
+            Model & Metodologi
+          </a>
+          <a href="/tentang" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            About
+          </a>
+          
+        </nav>
+
+        <button class="md:hidden text-white p-2" onclick="toggleMobileMenu()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <nav id="mobileMenu" class="md:hidden mt-4 space-y-2 hidden bg-black/40 backdrop-blur-lg rounded-lg p-4 border border-white/10">
+        <a href="/exchange" class="block text-gray-300 hover:text-yellow-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>💱</span>
+            <span>Exchange</span>
+          </span>
+        </a>
+        <a href="/prediksi" class="block text-gray-300 hover:text-pink-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🔮</span>
+            <span>Prediksi</span>
+          </span>
+        </a>
+        <a href="/model" class="block text-gray-300 hover:text-purple-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🧠</span>
+            <span>Model & Metodologi</span>
+          </span>
+        </a>
+        <a href="/tentang" class="block text-gray-300 hover:text-blue-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>ℹ️</span>
+            <span>About</span>
+          </span>
+        </a>
+        
+      </nav>
+    </div>
+  </header>
+  
+  <!-- ============ MAIN ============ -->
+  <main class="min-h-screen py-8 pt-24">
+    <!-- Header -->
+    <section class="py-8 px-4">
+      <div class="container mx-auto">
+        <div class="flex items-center justify-between mb-8">
+          <button onclick="window.location.href='/prediksi'" class="back-button px-4 py-2 rounded-lg text-white">
+            ← Kembali ke Prediksi
+          </button>
+          <div class="flex items-center space-x-2">
+            <div class="pulse-dot w-3 h-3 bg-green-400 rounded-full"></div>
+            <span class="text-sm text-gray-300">Live Data</span>
+          </div>
+        </div>
+        
+        <div class="text-center mb-8">
+          <h1 class="text-3xl md:text-5xl font-bold mb-4">
+            <span class="section-title">📊 Hasil Prediksi</span>
+          </h1>
+          <p id="cryptoTitle" class="text-xl text-gray-300">Bitcoin (BTC)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Price Cards -->
+    <section class="py-4 px-4">
+      <div class="container mx-auto">
+        <div class="max-w-6xl mx-auto">
+          <div class="prediction-card p-6 mb-8">
+            <div class="grid md:grid-cols-3 gap-6">
+              <div class="text-center">
+                <h3 class="text-lg font-medium text-gray-300 mb-2">Harga Saat Ini</h3>
+                <p id="currentPrice" class="text-3xl font-bold text-yellow-400">Loading...</p>
+                <p id="lastUpdate" class="text-sm text-gray-400 mt-1"></p>
+              </div>
+              <div class="text-center">
+                <h3 class="text-lg font-medium text-gray-300 mb-2">Prediksi 2 Hari</h3>
+                <p id="predictedPrice" class="text-3xl font-bold text-green-400">Loading...</p>
+              </div>
+              <div class="text-center">
+                <h3 class="text-lg font-medium text-gray-300 mb-2">Perubahan Prediksi</h3>
+                <div id="priceChange" class="price-indicator price-neutral mx-auto inline-block">
+                  <span id="changePercent">0%</span>
+                  <span id="changeIcon" class="ml-1">→</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="py-4 px-4">
+      <div class="container mx-auto">
+        <div class="max-w-6xl mx-auto space-y-8">
+
+          <div class="flex flex-wrap gap-2 mb-4" id="timeframeSelector">
+            <button class="tf-btn active" data-tf="1m">1m</button>
+            <button class="tf-btn" data-tf="3m">3m</button>
+            <button class="tf-btn" data-tf="5m">5m</button>
+            <button class="tf-btn" data-tf="15m">15m</button>
+            <button class="tf-btn" data-tf="1h">1H</button>
+            <button class="tf-btn" data-tf="4h">4H</button>
+            <button class="tf-btn" data-tf="1d">1D</button>
+            <button class="tf-btn" data-tf="1w">1W</button>
+          </div>
+
+          <!-- Real-time Chart -->
+          <div class="prediction-card p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold">📈 Harga Real-time</h3>
+              <div class="flex items-center space-x-2">
+                <div class="pulse-dot w-2 h-2 bg-blue-400 rounded-full"></div>
+                <span class="text-sm text-gray-400">Update setiap 5 detik</span>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="liveChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Prediction Chart -->
+          <div class="prediction-card p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold">🔮 Grafik Prediksi AI</h3>
+              <button id="overlayToggle" class="chart-toggle px-4 py-2 rounded-lg text-sm">
+                Bitcoin
+              </button>
+            </div>
+            <div class="chart-container">
+              <canvas id="predictionChart"></canvas>
+            </div>
+          </div>
+
+          <!-- AI Analysis -->
+          <div class="prediction-card p-6">
+            <h3 class="text-xl font-bold mb-4">🤖 Analisis AI</h3>
+            <div id="aiAnalysis" class="space-y-4">
+              <div class="flex items-start space-x-3">
+                <span class="text-blue-400 text-xl">📊</span>
+                <p class="text-gray-300">Menganalisis data historis dan pola pasar untuk prediksi 2 hari ke depan.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="bg-black/20 border-t border-white/10 py-8">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-gray-400">© 2024 CryptoPrediction. Prediksi cryptocurrency dengan AI.</p>
+    </div>
+  </footer>
+
+  <script>
+    /* ---------- GLOBAL VARIABLES ---------- */
+    let liveChart = null;
+    let predictionChart = null;
+    let overlayChart = null;
+    let liveData = [];
+    let predictionData = null;
+    let isOverlayMode = false;
+    const symbol = '{{ symbol }}' || 'BTC';
+    const maxLiveDataPoints = 50;
+
+    function toggleMobileMenu() {
+      document.getElementById('mobileMenu')?.classList.toggle('hidden');
+    }
+
+    /* ---------- JAKARTA TIME HELPER ---------- */
+    function getJakartaTime() {
+      return new Date().toLocaleString('id-ID', { 
+        timeZone: 'Asia/Jakarta',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
+
+    function getJakartaDate() {
+      return new Date().toLocaleDateString('id-ID', { 
+        timeZone: 'Asia/Jakarta',
+        day: '2-digit',
+        month: 'short'
+      });
+    }
+
+    /* ---------- LIVE CHART ---------- */
+    function initLiveChart() {
+      const ctx = document.getElementById('liveChart').getContext('2d');
+      liveChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: `${symbol} Live Price`,
+            data: [],
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#3b82f6',
+            pointRadius: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: 'white', font: { size: 14 } } }
+          },
+          scales: {
+            x: {
+              ticks: { color: 'rgba(255,255,255,0.7)' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            y: {
+              ticks: { 
+                color: 'rgba(255,255,255,0.7)',
+                callback: v => '$' + v.toLocaleString()
+              },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            }
+          }
+        }
+      });
+    }
+
+    /* ---------- PREDICTION CHART ---------- */
+    function initPredictionChart(labels, data) {
+      const ctx = document.getElementById('predictionChart').getContext('2d');
+      if (predictionChart) predictionChart.destroy();
+      
+      predictionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: `${symbol} Prediction`,
+            data,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: data.map((_, i) => i === data.length - 1 ? '#ef4444' : '#10b981'),
+            pointRadius: data.map((_, i) => i === data.length - 1 ? 8 : 4)
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 0 },
+          plugins: {
+            legend: { labels: { color: 'white', font: { size: 14 } } }
+          },
+          scales: {
+            x: {
+              ticks: { color: 'rgba(255,255,255,0.7)' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            y: {
+              ticks: { 
+                color: 'rgba(255,255,255,0.7)',
+                callback: v => '$' + v.toLocaleString()
+              },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            }
+          }
+        }
+      });
+    }
+
+    /* ---------- OVERLAY CHART ---------- */
+    function createOverlayChart() {
+      const ctx = document.getElementById('predictionChart').getContext('2d');
+      if (predictionChart) predictionChart.destroy();
+      
+      const liveLabels = liveData.map(d => d.time);
+      const livePrices = liveData.map(d => d.price);
+      
+      overlayChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [...liveLabels, ...predictionData.labels],
+          datasets: [
+            {
+              label: `${symbol} Live`,
+              data: [...livePrices, ...Array(predictionData.labels.length).fill(null)],
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              borderWidth: 2,
+              fill: false,
+              tension: 0.4,
+              pointRadius: 2
+            },
+            {
+              label: `${symbol} Prediction`,
+              data: [...Array(liveLabels.length).fill(null), ...predictionData.prices],
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              borderWidth: 3,
+              fill: false,
+              tension: 0.4,
+              pointRadius: 4,
+              borderDash: [5, 5]
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 0 },
+          plugins: {
+            legend: { labels: { color: 'white', font: { size: 14 } } }
+          },
+          scales: {
+            x: {
+              ticks: { color: 'rgba(255,255,255,0.7)' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            y: {
+              ticks: { 
+                color: 'rgba(255,255,255,0.7)',
+                callback: v => '$' + v.toLocaleString()
+              },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            }
+          }
+        }
+      });
+    }
+
+    async function updateLivePrice() {
+      try {
+        const response = await fetch(`/api/live-price/${symbol}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          const currentTime = getJakartaTime();
+          const newDataPoint = {
+            time: currentTime,
+            price: data.price
+          };
+          liveData.push(newDataPoint);
+
+          if (liveData.length > maxLiveDataPoints) liveData.shift();
+
+          if (liveChart && !isOverlayMode) {
+            liveChart.data.labels = liveData.map(d => d.time);
+            liveChart.data.datasets[0].data = liveData.map(d => d.price);
+            liveChart.update('none');
+          }
+          if (isOverlayMode && predictionData) createOverlayChart();
+
+          document.getElementById('currentPrice').textContent = '$' + data.price.toLocaleString();
+          document.getElementById('lastUpdate').textContent = `Terakhir update: ${currentTime} WIB`;
+
+          // ==== INI DITAMBAHKAN ====
+          // Update "Perubahan Prediksi" dan AI Analysis setiap kali harga update
+          if (predictionData && predictionData.prices.length > 0) {
+            updatePriceChange(data.price, predictionData.prices[predictionData.prices.length - 1]);
+            updateAIAnalysis();
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching live price:', error);
+      }
+    }
+
+
+    /* ---------- UPDATE PRICE CHANGE ---------- */
+    function updatePriceChange(currentPrice, predictedPrice) {
+      const change = ((predictedPrice - currentPrice) / currentPrice) * 100;
+      
+      const badge = document.getElementById('priceChange');
+      const pct = document.getElementById('changePercent');
+      const icon = document.getElementById('changeIcon');
+      
+      pct.textContent = Math.abs(change).toFixed(2) + '%';
+      
+      if (change > 0) {
+        badge.className = 'price-indicator price-up mx-auto inline-block';
+        icon.textContent = '↗';
+      } else if (change < 0) {
+        badge.className = 'price-indicator price-down mx-auto inline-block';
+        icon.textContent = '↘';
+      } else {
+        badge.className = 'price-indicator price-neutral mx-auto inline-block';
+        icon.textContent = '→';
+      }
+    }
+
+    /* ---------- LOAD PREDICTION DATA ---------- */
+    async function loadPredictionData() {
+      try {
+        const response = await fetch(`/api/predict/${symbol}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          const labels = data.dates.map(d => new Date(d).toLocaleDateString('id-ID', {
+            month: 'short',
+            day: 'numeric'
+          }));
+          
+          predictionData = {
+            labels: labels,
+            prices: data.prices,
+            current: data.current
+          };
+          
+          // Update predicted price display
+          document.getElementById('predictedPrice').textContent = 
+            '$' + data.prices[data.prices.length - 1].toLocaleString();
+          
+          // Initialize prediction chart
+          initPredictionChart(labels, data.prices);
+          
+          // Update AI analysis
+          updateAIAnalysis(data.current, data.prices);
+          
+        } else {
+          throw new Error(data.error || 'Failed to load prediction');
+        }
+      } catch (error) {
+        console.error('Error loading prediction:', error);
+        alert('Gagal memuat data prediksi: ' + error.message);
+      }
+    }
+
+    function updateAIAnalysis() {
+      const pct = document.getElementById('changePercent');
+      const badge = document.getElementById('priceChange');
+      const changeFormatted = pct.textContent;
+
+      let trend, trendColor, trendIcon;
+      if (badge.classList.contains('price-up')) {
+        trend = 'bullish';
+        trendColor = 'text-green-400';
+        trendIcon = '📈';
+      } else if (badge.classList.contains('price-down')) {
+        trend = 'bearish';
+        trendColor = 'text-red-400';
+        trendIcon = '📉';
+      } else {
+        trend = 'netral';
+        trendColor = 'text-gray-400';
+        trendIcon = '→';
+      }
+
+      document.getElementById('aiAnalysis').innerHTML = `
+        <div class="flex items-start space-x-3">
+          <span class="${trendColor} text-xl">${trendIcon}</span>
+          <p class="text-gray-300">
+            Model AI memproyeksikan tren <strong class="${trendColor}">${trend}</strong>
+            untuk BTC selama 2 hari ke depan dengan perubahan sekitar
+            <strong class="${trendColor}">${changeFormatted}</strong>.
+          </p>
+        </div>
+        <div class="flex items-start space-x-3">
+          <span class="text-blue-400 text-xl">⚡</span>
+          <p class="text-gray-300">
+            Prediksi didasarkan pada analisis pola historis, volume trading,
+            dan indikator teknis menggunakan algoritma machine learning.
+          </p>
+        </div>
+        <div class="flex items-start space-x-3">
+          <span class="text-yellow-400 text-xl">⚠️</span>
+          <p class="text-gray-300">
+            <em>Disclaimer: Prediksi ini hanya untuk referensi dan tidak menjamin hasil investasi.
+            Selalu lakukan riset mandiri sebelum berinvestasi.</em>
+          </p>
+        </div>
+      `;
+    }
+
+
+
+
+    /* ---------- OVERLAY TOGGLE ---------- */
+    document.getElementById('overlayToggle').addEventListener('click', function() {
+      isOverlayMode = !isOverlayMode;
+      const button = this;
+      
+      if (isOverlayMode) {
+        button.textContent = 'Pisahkan Chart';
+        button.classList.add('active');
+        if (predictionData) {
+          createOverlayChart();
+        }
+      } else {
+        button.textContent = 'Overlay dengan Real-time';
+        button.classList.remove('active');
+        if (predictionData) {
+          initPredictionChart(predictionData.labels, predictionData.prices);
+        }
+      }
+    });
+
+    /* ---------- INITIALIZATION ---------- */
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set crypto title
+      const cryptoNames = {
+        'BTC': 'Bitcoin (BTC)',
+        'ETH': 'Ethereum (ETH)',
+        'BNB': 'Binance Coin (BNB)'
+      };
+      document.getElementById('cryptoTitle').textContent = cryptoNames[symbol] || `${symbol}`;
+      
+      // Initialize charts and load data
+      initLiveChart();
+      loadPredictionData();
+      
+      // Start live price updates
+      updateLivePrice();
+      setInterval(updateLivePrice, 5000); // Update every 5 seconds
+      
+      // Add fade-in animation
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in');
+          }
+        });
+      }, { threshold: 0.1 });
+      
+      document.querySelectorAll('.prediction-card').forEach(el => {
+        observer.observe(el);
+      });
+    });
+  </script>
+</body>
+</html>

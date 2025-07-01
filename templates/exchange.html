@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bitcoin Live Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Floating Bitcoin symbols */
+    .floating-bitcoin {
+      position: fixed;
+      pointer-events: none;
+      font-size: 24px;
+      opacity: 0.1;
+      z-index: 1;
+      animation: float-bitcoin 15s ease-in-out infinite;
+    }
+    @keyframes float-bitcoin {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+
+    /* Bitcoin card effects */
+    .bitcoin-card {
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(15px);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(247, 147, 26, 0.3);
+      transition: all 0.4s ease;
+    }
+    .bitcoin-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      background: rgba(247, 147, 26, 0.15);
+      border: 1px solid rgba(247, 147, 26, 0.5);
+      box-shadow: 0 20px 60px rgba(247, 147, 26, 0.2);
+    }
+    .bitcoin-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(247, 147, 26, 0.3), transparent);
+      transition: left 0.6s;
+    }
+    .bitcoin-card:hover::before {
+      left: 100%;
+    }
+
+    /* Chart container styling */
+    .chart-container {
+      position: relative;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(247, 147, 26, 0.2);
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    /* Price display animations */
+    .price-display {
+      animation: price-glow 3s ease-in-out infinite;
+    }
+    @keyframes price-glow {
+      0%, 100% { text-shadow: 0 0 20px rgba(247, 147, 26, 0.5); }
+      50% { text-shadow: 0 0 40px rgba(247, 147, 26, 0.8), 0 0 60px rgba(247, 147, 26, 0.3); }
+    }
+
+    /* Live indicator */
+    .live-indicator {
+      animation: live-pulse 2s ease-in-out infinite;
+    }
+    @keyframes live-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.1); }
+    }
+
+    /* Bitcoin loader */
+    .bitcoin-loader {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+    .bitcoin-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 6px solid transparent;
+      border-radius: 50%;
+      border-top: 6px solid #f7931a;
+      border-right: 6px solid #f7931a;
+      animation: bitcoin-spin 2s linear infinite;
+    }
+    .bitcoin-symbol {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 32px;
+      font-weight: bold;
+      color: #f7931a;
+      animation: symbol-glow 2s ease-in-out infinite;
+    }
+    @keyframes bitcoin-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes symbol-glow {
+      0%, 100% { 
+        text-shadow: 0 0 20px #f7931a; 
+        transform: translate(-50%, -50%) scale(1); 
+      }
+      50% { 
+        text-shadow: 0 0 40px #f7931a, 0 0 60px #f7931a; 
+        transform: translate(-50%, -50%) scale(1.2); 
+      }
+    }
+
+    /* Stats card styling */
+    .stats-card {
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    .stats-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(247, 147, 26, 0.3);
+      box-shadow: 0 10px 30px rgba(247, 147, 26, 0.1);
+    }
+
+    /* Responsive text sizing */
+    @media (max-width: 768px) {
+      .price-display {
+        font-size: 2.5rem;
+      }
+    }
+
+    /* Navigation styling */
+    .nav-link {
+      position: relative;
+      overflow: hidden;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: currentColor;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-x-hidden min-h-screen">
+
+  <!-- Floating Bitcoin Symbols -->
+  <div class="floating-bitcoin" style="top: 10%; left: 5%;">₿</div>
+  <div class="floating-bitcoin" style="top: 20%; right: 10%; animation-delay: -3s;">₿</div>
+  <div class="floating-bitcoin" style="top: 60%; left: 8%; animation-delay: -6s;">₿</div>
+  <div class="floating-bitcoin" style="bottom: 30%; right: 5%; animation-delay: -9s;">₿</div>
+  <div class="floating-bitcoin" style="bottom: 10%; left: 15%; animation-delay: -12s;">₿</div>
+
+  <!-- Header -->
+  <header class="bg-black/20 backdrop-blur-lg shadow-xl sticky top-0 z-50 border-b border-white/10">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <!-- Logo/Title -->
+        <div class="nav-link">
+          <a href="/" class="no-underline">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
+              ₿ITCAST
+            </h1>
+          </a>
+        </div>
+        
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex space-x-8 text-gray-300 font-medium">
+          <a href="#" class="nav-link hover:text-yellow-400 transition duration-300 px-2 py-1">
+            Exchange
+          </a>
+          <a href="/prediksi" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            Prediksi
+          </a>
+          <a href="/model" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            Model & Metodologi
+          </a>
+          <a href="/tentang" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            About
+          </a>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden text-white p-2" onclick="toggleMobileMenu()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <nav id="mobileMenu" class="md:hidden mt-4 space-y-2 hidden bg-black/40 backdrop-blur-lg rounded-lg p-4 border border-white/10">
+        <a href="/exchange" class="block text-gray-300 hover:text-yellow-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>💱</span>
+            <span>Exchange</span>
+          </span>
+        </a>
+        <a href="/prediksi" class="block text-gray-300 hover:text-pink-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🔮</span>
+            <span>Prediksi</span>
+          </span>
+        </a>
+        <a href="/model" class="block text-gray-300 hover:text-purple-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🧠</span>
+            <span>Model & Metodologi</span>
+          </span>
+        </a>
+        <a href="/tentang" class="block text-gray-300 hover:text-blue-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>ℹ️</span>
+            <span>About</span>
+          </span>
+        </a>
+        
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8 relative z-10">
+    
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="flex flex-col justify-center items-center min-h-[60vh] relative">
+      <div class="bitcoin-loader">
+        <div class="bitcoin-ring"></div>
+        <div class="bitcoin-symbol">₿</div>
+      </div>
+      <div class="text-orange-400 font-semibold mt-6 text-lg">
+        Loading Bitcoin Data...
+      </div>
+    </div>
+
+    <!-- Bitcoin Dashboard -->
+    <div id="bitcoin-dashboard" class="hidden">
+      
+      <!-- Bitcoin Header -->
+      <div class="text-center mb-12">
+        <div class="flex items-center justify-center mb-6">
+          <div class="text-6xl mr-4">₿</div>
+          <h2 class="text-4xl md:text-6xl font-bold bg-gradient-to-r from-orange-400 to-yellow-500 bg-clip-text text-transparent">
+            Bitcoin
+          </h2>
+        </div>
+        <p class="text-gray-300 text-xl">Live Bitcoin Price & Market Data</p>
+      </div>
+
+      <!-- Main Price Card -->
+      <div class="bitcoin-card rounded-3xl p-8 mb-8 shadow-2xl">
+        <div class="flex flex-col md:flex-row items-center justify-between">
+          <div class="text-center md:text-left mb-6 md:mb-0">
+            <div id="bitcoin-price" class="price-display text-5xl md:text-7xl font-bold text-orange-400 mb-4">
+              $0.00
+            </div>
+            <div class="flex items-center justify-center md:justify-start text-2xl font-semibold">
+              <span id="price-change" class="flex items-center">
+                <span id="change-icon">📈</span>
+                <span id="change-percent" class="ml-2">0.00%</span>
+                <span id="change-amount" class="ml-3 text-gray-400 text-lg">($0.00)</span>
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center live-indicator">
+            <div class="w-4 h-4 bg-green-400 rounded-full mr-3"></div>
+            <span class="text-green-400 font-bold text-xl">LIVE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Chart -->
+      <div class="chart-container mb-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center">
+            <span class="text-3xl mr-3">📊</span>
+            <h3 class="text-2xl font-bold text-orange-400">Live Price Chart</h3>
+          </div>
+          <div class="flex space-x-2">
+            <button class="interval-btn active" data-interval="15m">15m</button>
+            <button class="interval-btn" data-interval="1h">1h</button>
+            <button class="interval-btn" data-interval="4h">4h</button>
+            <button class="interval-btn" data-interval="1d">1d</button>
+          </div>
+        </div>
+        <div class="h-80">
+          <canvas id="bitcoin-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="stats-card rounded-2xl p-6">
+          <div class="flex items-center mb-4">
+            <span class="text-2xl mr-3">📈</span>
+            <h4 class="text-lg font-semibold text-green-400">24h High</h4>
+          </div>
+          <div id="high-24h" class="text-2xl font-bold">$0.00</div>
+        </div>
+        
+        <div class="stats-card rounded-2xl p-6">
+          <div class="flex items-center mb-4">
+            <span class="text-2xl mr-3">📉</span>
+            <h4 class="text-lg font-semibold text-red-400">24h Low</h4>
+          </div>
+          <div id="low-24h" class="text-2xl font-bold">$0.00</div>
+        </div>
+        
+        <div class="stats-card rounded-2xl p-6">
+          <div class="flex items-center mb-4">
+            <span class="text-2xl mr-3">💹</span>
+            <h4 class="text-lg font-semibold text-blue-400">24h Volume</h4>
+          </div>
+          <div id="volume-24h" class="text-2xl font-bold">$0.00</div>
+        </div>
+        
+        <div class="stats-card rounded-2xl p-6">
+          <div class="flex items-center mb-4">
+            <span class="text-2xl mr-3">🏦</span>
+            <h4 class="text-lg font-semibold text-orange-400">Market Cap</h4>
+          </div>
+          <div id="market-cap" class="text-2xl font-bold">$0.00</div>
+        </div>
+      </div>
+
+     
+    </div>
+  </main>
+  <footer class="bg-black/20 border-t border-white/10 py-8">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-gray-400">© 2024 CryptoPrediction. Prediksi cryptocurrency dengan AI.</p>
+    </div>
+  </footer>
+
+  <style>
+    .interval-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #9ca3af;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .interval-btn:hover {
+      background: rgba(247, 147, 26, 0.2);
+      border-color: rgba(247, 147, 26, 0.4);
+      color: #f7931a;
+    }
+    .interval-btn.active {
+      background: rgba(247, 147, 26, 0.3);
+      border-color: rgba(247, 147, 26, 0.6);
+      color: #f7931a;
+    }
+  </style>
+
+  <script>
+    // Bitcoin data management
+    let bitcoinData = {
+      price: 0,
+      change24h: 0,
+      changePercent24h: 0,
+      volume24h: 0,
+      marketCap: 0,
+      high24h: 0,
+      low24h: 0
+    };
+
+    let chart = null;
+    let currentInterval = '15m';
+
+    // Utility functions
+    function formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    }
+
+    function formatLargeNumber(value) {
+      if (value >= 1e12) return `$${(value / 1e12).toFixed(2)}T`;
+      if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
+      if (value >= 1e6) return `$${(value / 1e6).toFixed(2)}M`;
+      return formatCurrency(value);
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Fetch live Bitcoin price from Flask backend
+    async function fetchLivePrice() {
+      try {
+        const response = await fetch('/api/live-price/BTC');
+        const data = await response.json();
+        return data.price;
+      } catch (error) {
+        console.error('Error fetching live price:', error);
+        return null;
+      }
+    }
+
+    // Fetch Bitcoin data from Binance API via Flask backend
+    async function fetchBitcoinData() {
+      try {
+        const response = await fetch('/api/binance');
+        const data = await response.json();
+        
+        // Find Bitcoin in the data
+        const btcData = data.find(coin => coin.symbol === 'BTC');
+        if (btcData) {
+          return {
+            price: btcData.price,
+            change24h: (btcData.price * btcData.change_pct) / 100,
+            changePercent24h: btcData.change_pct,
+            volume24h: btcData.volume,
+            marketCap: btcData.market_cap || 0,
+            high24h: btcData.price * (1 + Math.abs(btcData.change_pct) / 100),
+            low24h: btcData.price * (1 - Math.abs(btcData.change_pct) / 100)
+          };
+        }
+      } catch (error) {
+        console.error('Error fetching Bitcoin data:', error);
+      }
+      return null;
+    }
+
+    // Fetch chart data from Flask backend
+    async function fetchChartData(interval = '15m') {
+      try {
+        const response = await fetch(`/api/klines?symbol=BTC&interval=${interval}`);
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching chart data:', error);
+        return [];
+      }
+    }
+
+    // Update UI with new data
+    function updateUI(data) {
+      document.getElementById('bitcoin-price').textContent = formatCurrency(data.price);
+      
+      const isPositive = data.changePercent24h >= 0;
+      const changeElement = document.getElementById('price-change');
+      const changeIcon = document.getElementById('change-icon');
+      const changePercent = document.getElementById('change-percent');
+      const changeAmount = document.getElementById('change-amount');
+      
+      changeElement.className = `flex items-center ${isPositive ? 'text-green-400' : 'text-red-400'}`;
+      changeIcon.textContent = isPositive ? '📈' : '📉';
+      changePercent.textContent = `${isPositive ? '+' : ''}${data.changePercent24h.toFixed(2)}%`;
+      changeAmount.textContent = `(${isPositive ? '+' : ''}${formatCurrency(data.change24h)})`;
+      
+      document.getElementById('high-24h').textContent = formatCurrency(data.high24h);
+      document.getElementById('low-24h').textContent = formatCurrency(data.low24h);
+      document.getElementById('volume-24h').textContent = formatLargeNumber(data.volume24h);
+      document.getElementById('market-cap').textContent = formatLargeNumber(data.marketCap);
+    }
+
+    // Initialize chart
+    function initChart() {
+      const ctx = document.getElementById('bitcoin-chart').getContext('2d');
+      
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Bitcoin Price (USD)',
+            data: [],
+            borderColor: '#f7931a',
+            backgroundColor: 'rgba(247, 147, 26, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            pointRadius: 2,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#f7931a',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#f7931a',
+              bodyColor: '#ffffff',
+              borderColor: '#f7931a',
+              borderWidth: 1,
+              cornerRadius: 8,
+              callbacks: {
+                label: function(context) {
+                  return `Price: ${formatCurrency(context.parsed.y)}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              display: true,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#9ca3af',
+                maxTicksLimit: 8
+              }
+            },
+            y: {
+              display: true,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#9ca3af',
+                callback: function(value) {
+                  return formatCurrency(value);
+                }
+              }
+            }
+          },
+          elements: {
+            point: {
+              hoverBackgroundColor: '#f7931a'
+            }
+          },
+          animation: {
+            duration: 1000,
+            easing: 'easeInOutQuart'
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          }
+        }
+      });
+    }
+
+    // Update chart with new data
+    async function updateChart(interval = '15m') {
+      const chartData = await fetchChartData(interval);
+      if (chartData && chartData.length > 0) {
+        const labels = chartData.map(item => {
+          const date = new Date(item.x);
+          return date.toLocaleTimeString([], { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          });
+        });
+        const prices = chartData.map(item => item.close);
+        
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = prices;
+        chart.update('none');
+      }
+    }
+
+    // Initialize the dashboard
+    async function initDashboard() {
+      // Show loading for 2 seconds
+      setTimeout(async () => {
+        document.getElementById('loading-spinner').classList.add('hidden');
+        document.getElementById('bitcoin-dashboard').classList.remove('hidden');
+        
+        // Initialize chart
+        initChart();
+        
+        // Fetch initial data
+        bitcoinData = await fetchBitcoinData();
+        if (bitcoinData) {
+          updateUI(bitcoinData);
+        }
+        
+        // Load initial chart data
+        await updateChart(currentInterval);
+        
+        // Start live updates every 10 seconds
+        setInterval(async () => {
+          const newData = await fetchBitcoinData();
+          if (newData) {
+            bitcoinData = newData;
+            updateUI(bitcoinData);
+          }
+        }, 10000);
+        
+        // Update chart every 30 seconds
+        setInterval(async () => {
+          await updateChart(currentInterval);
+        }, 30000);
+        
+      }, 2000);
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      // Interval buttons
+      document.querySelectorAll('.interval-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          document.querySelectorAll('.interval-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentInterval = this.dataset.interval;
+          await updateChart(currentInterval);
+        });
+      });
+
+      // Prediction button
+      document.getElementById('predict-btn').addEventListener('click', fetchPrediction);
+    });
+
+    // Start the dashboarda
+    initDashboard();
+  </script>
+</body>
+</html>

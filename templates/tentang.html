@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About - CryptoPrediction Team</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom animations and effects */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .floating-crypto {
+      position: fixed;
+      pointer-events: none;
+      font-size: 24px;
+      opacity: 0.1;
+      z-index: 1;
+      animation: float-crypto 15s ease-in-out infinite;
+    }
+
+    @keyframes float-crypto {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+
+    .team-card {
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.05); /* Slightly more opaque for better contrast */
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .team-card:hover {
+      transform: translateY(-5px) scale(1.02); /* Lift and slightly scale */
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5); /* More pronounced shadow */
+    }
+
+    .team-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); /* Softer hover effect */
+      transition: left 0.5s ease;
+    }
+
+    .team-card:hover::before {
+      left: 100%;
+    }
+
+    .profile-image {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s ease;
+    }
+
+    .profile-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(45deg, #f7931a, #627eea, #10b981, #a855f7);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: subtract;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .team-card:hover .profile-image::after {
+      opacity: 1;
+    }
+
+    /* Stagger animation delays for skill tags */
+    .skill-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 20px;
+      font-size: 12px;
+      margin: 2px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideInUp 0.6s ease forwards;
+    }
+
+    @keyframes slideInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .crypto-icon {
+      display: inline-block;
+      font-size: 20px;
+      margin: 0 5px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    .section-title {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .social-links a {
+      transition: all 0.3s ease;
+      color: #9ca3af; /* Default color for social icons */
+    }
+
+    .social-links a:hover {
+      transform: translateY(-3px) scale(1.1);
+      color: #6366f1; /* A more vibrant hover color */
+    }
+
+    /* Modal Styling */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      backdrop-filter: blur(8px); /* Increased blur for better separation */
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #2a2a4a 0%, #1a1a2e 100%); /* Darker gradient for modal */
+      border-radius: 20px;
+      padding: 2.5rem; /* Slightly more padding */
+      max-width: 600px; /* Increased max-width */
+      margin: 20px;
+      transform: scale(0.9);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      color: white; /* Ensure text is visible */
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .modal.active .modal-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .modal-close-button {
+      background: #ef4444; /* Red color */
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    .modal-close-button:hover {
+      background: #dc2626; /* Darker red on hover */
+    }
+
+    /* Card styling for methodologies */
+    .method-card {
+      background: rgba(255, 255, 255, 0.08); /* Slightly brighter for content cards */
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .method-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .section-title {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .text-gradient-purple-blue {
+        background: linear-gradient(45deg, #a855f7, #6366f1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-x-hidden">
+
+  <div class="floating-crypto" style="top: 10%; left: 5%;">₿</div>
+  <div class="floating-crypto" style="top: 20%; right: 10%; animation-delay: -2s;">Ξ</div>
+  <div class="floating-crypto" style="top: 60%; left: 8%; animation-delay: -4s;">₮</div>
+  <div class="floating-crypto" style="bottom: 30%; right: 5%; animation-delay: -6s;">♦</div>
+  <div class="floating-crypto" style="bottom: 10%; left: 15%; animation-delay: -8s;">₳</div>
+
+  <header class="bg-black/20 backdrop-blur-lg shadow-xl sticky top-0 z-50 border-b border-white/10">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <div class="nav-link">
+          <a href="/" class="no-underline">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
+              ₿ITCAST
+            </h1>
+          </a>
+        </div>
+
+        <nav class="hidden md:flex space-x-8 text-gray-300 font-medium">
+          <a href="/exchange" class="nav-link hover:text-yellow-400 transition duration-300 px-2 py-1">
+            Exchange
+          </a>
+          <a href="/prediksi" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            Prediksi
+          </a>
+          <a href="/model" class="nav-link hover:text-purple-400 transition duration-300 px-2 py-1">
+            Model & Metodologi
+          </a>
+          <a href="#" class="nav-link text-blue-400 underline underline-offset-4">
+            About
+          </a>
+          
+        </nav>
+
+        <button class="md:hidden text-white p-2" onclick="toggleMobileMenu()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <nav id="mobileMenu" class="md:hidden mt-4 space-y-2 hidden bg-black/40 backdrop-blur-lg rounded-lg p-4 border border-white/10">
+        <a href="/exchange" class="block text-gray-300 hover:text-yellow-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>💱</span>
+            <span>Exchange</span>
+          </span>
+        </a>
+        <a href="/prediksi" class="block text-gray-300 hover:text-pink-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🔮</span>
+            <span>Prediksi</span>
+          </span>
+        </a>
+        <a href="/model" class="block text-gray-300 hover:text-purple-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🧠</span>
+            <span>Model & Metodologi</span>
+          </span>
+        </a>
+        <a href="/tentang" class="block text-gray-300 hover:text-blue-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>ℹ️</span>
+            <span>About</span>
+          </span>
+        </a>
+        
+      </nav>
+    </div>
+  </header>
+
+  <section class="py-20 relative">
+    <div class="container mx-auto text-center relative z-10">
+      <h2 class="text-6xl font-bold section-title mb-6">
+        Meet The Visionaries
+      </h2>
+      <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+        Behind <span class="crypto-icon">🚀</span> Bitcast <span class="crypto-icon">📈</span>
+      </p>
+    </div>
+  </section>
+
+    
+  <section class="py-16 relative">
+    <div class="container mx-auto px-4">
+      <h3 class="text-3xl md:text-4xl font-bold text-center mb-4">
+        <span class="section-title">Our Team</span>
+      </h3>
+    </div>
+
+    <div class="container mx-auto px-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 justify-center">
+
+    <!-- Brahmantya Fikri - Front End -->
+          <div class="team-card p-8 rounded-2xl shadow-2xl hover:shadow-purple-500/25 cursor-pointer" onclick="openMemberModal(0)">
+            <div class="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 p-1 shadow-lg profile-image">
+              <img src="static/image/Fikri.jpeg" alt="Brahmantya Fikri" class="w-full h-full object-cover rounded-full border-4 border-white shadow-md">
+            </div>
+            <h3 class="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">Brahmantya Fikri</h3>
+            <p class="text-center text-gray-400 mb-4 font-semibold">164221034</p>
+            <div class="text-center mb-4">
+              <div class="skill-tag" style="animation-delay: 0.2s;">HTML</div>
+              <div class="skill-tag" style="animation-delay: 0.3s;">CSS</div>
+              <div class="skill-tag" style="animation-delay: 0.4s;">UI/UX</div>
+            </div>
+            <p class="text-gray-300 text-center text-sm leading-relaxed">Bertanggung jawab pada desain antarmuka pengguna dan pengembangan front end aplikasi prediksi kripto.</p>
+          </div>
+
+          <!-- Putu Aryasuta Tirta - Modeling -->
+          <div class="team-card p-8 rounded-2xl shadow-2xl hover:shadow-pink-500/25 cursor-pointer" onclick="openMemberModal(1)">
+            <div class="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 p-1 shadow-lg profile-image">
+              <img src="static/image/Arya.jpg" alt="Putu Aryasuta Tirta" class="w-full h-full object-cover rounded-full border-4 border-white shadow-md">
+            </div>
+            <h3 class="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-pink-400 to-purple-500 bg-clip-text text-transparent">Putu Aryasuta Tirta</h3>
+            <p class="text-center text-gray-400 mb-4 font-semibold">164221035</p>
+            <div class="text-center mb-4">
+              <div class="skill-tag" style="animation-delay: 0.1s;">TensorFlow</div>
+              <div class="skill-tag" style="animation-delay: 0.2s;">ML/DeepL</div>
+              <div class="skill-tag" style="animation-delay: 0.3s;">Python</div>
+            </div>
+            <p class="text-gray-300 text-center text-sm leading-relaxed">Fokus pada pemodelan data, pengembangan algoritma prediksi, dan evaluasi performa model machine learning.</p>
+          </div>
+
+          <!-- Firdaus Mu'afi - Front End -->
+          <div class="team-card p-8 rounded-2xl shadow-2xl hover:shadow-pink-500/25 cursor-pointer" onclick="openMemberModal(2)">
+            <div class="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 p-1 shadow-lg profile-image">
+              <img src="static/image/Afi.jpeg" alt="Firdaus Mu'afi" class="w-full h-full object-cover rounded-full border-4 border-white shadow-md">
+            </div>
+            <h3 class="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-pink-400 to-purple-500 bg-clip-text text-transparent">Firdaus Mu'afi</h3>
+            <p class="text-center text-gray-400 mb-4 font-semibold">164221092</p>
+            <div class="text-center mb-4">
+              <div class="skill-tag" style="animation-delay: 0.2s;">HTML</div>
+              <div class="skill-tag" style="animation-delay: 0.3s;">CSS</div>
+              <div class="skill-tag" style="animation-delay: 0.4s;">UI/UX</div>
+            </div>
+            <p class="text-gray-300 text-center text-sm leading-relaxed">Mengembangkan komponen visual, responsivitas tampilan, dan memastikan pengalaman pengguna yang optimal.</p>
+          </div>
+
+          <!-- Naufal Izzah (Ramadhan) - Backend & Deploy -->
+          <div class="team-card p-8 rounded-2xl shadow-2xl hover:shadow-purple-500/25 cursor-pointer" onclick="openMemberModal(3)">
+            <div class="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 p-1 shadow-lg profile-image">
+              <img src="static/image/Rama.jpeg" alt="Naufal Izzah" class="w-full h-full object-cover rounded-full border-4 border-white shadow-md">
+            </div>
+            <h3 class="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-pink-400 to-purple-500 bg-clip-text text-transparent">Naufal Izzah Ramadhan</h3>
+            <p class="text-center text-gray-400 mb-4 font-semibold">164221087</p>
+            <div class="text-center mb-4">
+              <div class="skill-tag" style="animation-delay: 0.1s;">Flask</div>
+              <div class="skill-tag" style="animation-delay: 0.2s;">Deploy</div>
+              <div class="skill-tag" style="animation-delay: 0.4s;">API</div>
+            </div>
+            <p class="text-gray-300 text-center text-sm leading-relaxed">Bertanggung jawab untuk pengembangan backend, pengelolaan database, dan deployment aplikasi ke cloud.</p>
+          </div>
+
+          <!-- Billy Dawson - Modeling -->
+          <div class="team-card p-8 rounded-2xl shadow-2xl hover:shadow-pink-500/25 cursor-pointer" onclick="openMemberModal(4)">
+            <div class="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 p-1 shadow-lg profile-image">
+              <img src="static/image/Billy.jpeg" alt="Billy Dawson" class="w-full h-full object-cover rounded-full border-4 border-white shadow-md">
+            </div>
+            <h3 class="text-2xl font-bold text-center mb-2 bg-gradient-to-r from-pink-400 to-purple-500 bg-clip-text text-transparent">Billy Dawson</h3>
+            <p class="text-center text-gray-400 mb-4 font-semibold">164221041</p>
+            <div class="text-center mb-4">
+              <div class="skill-tag" style="animation-delay: 0.1s;">TensorFlow</div>
+              <div class="skill-tag" style="animation-delay: 0.2s;">ML/DeepL</div>
+              <div class="skill-tag" style="animation-delay: 0.3s;">Python</div>
+            </div>
+            <p class="text-gray-300 text-center text-sm leading-relaxed">Bertugas dalam pengembangan model machine learning serta analisis data untuk mendukung akurasi prediksi.</p>
+          </div>
+
+        </div>
+      </div>
+  </section>
+
+  <div id="memberModal" class="modal">
+    <div class="modal-content">
+      <div>
+        <img id="modalMemberImage" src="" alt="Foto Profil" class="w-28 h-28 rounded-xl object-cover border-4 border-white shadow-lg">
+      </div>
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="modalMemberName" class="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent"></h3>
+        <button onclick="closeMemberModal()" class="text-gray-400 hover:text-gray-200 text-2xl leading-none">&times;</button>
+      </div>
+      <p id="modalMemberId" class="text-lg text-gray-300 mb-2"></p>
+      <div id="modalMemberSkills" class="mb-4 flex flex-wrap gap-2"></div>
+      <p id="modalMemberDescription" class="text-gray-200 text-base leading-relaxed mb-6"></p>
+      <p id="modalMemberAdditionalInfo" class="text-gray-400 text-sm italic mb-6"></p>
+      <div class="social-links flex space-x-5 justify-center">
+        <a id="modalMemberTwitter" href="#" class="text-gray-300 hover:text-blue-400"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/></svg></a>
+        <a id="modalMemberLinkedIn" href="#" class="text-gray-300 hover:text-blue-600"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.765 0-.975.784-1.764 1.75-1.764s1.75.789 1.75 1.764c0 .975-.784 1.765-1.75 1.765zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+        <a id="modalMemberGitHub" href="#" class="text-gray-300 hover:text-gray-900"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.08-.744.084-.729.084-.729 1.195.084 1.839 1.22 1.839 1.22 1.065 1.838 2.795 1.305 3.478.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.046.138 3.003.404 2.295-1.552 3.3-1.23 3.3-1.23.645 1.653.24 2.873.105 3.176.77.84 1.235 1.91 1.235 3.22 0 4.61-2.802 5.624-5.475 5.922.42.36.81 1.096.81 2.222v3.293c0 .319.192.694.801.576c4.765-1.589 8.197-6.095 8.197-11.387c0-6.627-5.373-12-12-12z"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <footer class="bg-black/20 border-t border-white/10 py-8 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-gray-400">© 2025 Bitcast. Prediksi cryptocurrency dengan AI.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Data for team members
+    const teamMembersData = [
+      {
+        name: "Brahmantya Fikri",
+        id: "164221034",
+        image: "static/image/Fikri.jpeg",
+        skills: ["HTML", "CSS", "UI/UX"],
+        description: "Bertanggung jawab pada desain antarmuka pengguna dan pengembangan front end aplikasi prediksi kripto.",
+        additionalInfo: "Fikri berfokus pada pengalaman pengguna dan pembuatan tampilan aplikasi yang responsif serta menarik.",
+        social: {}
+      },
+      {
+        name: "Putu Aryasuta Tirta",
+        id: "164221035",
+        image: "static/image/Arya.jpg",
+        skills: ["Tensorflow", "ML/DeepL", "Python"],
+        description: "Fokus pada pemodelan data, pengembangan algoritma prediksi, dan evaluasi performa model machine learning.",
+        additionalInfo: "Arya mendalami teknik-teknik baru dalam machine learning untuk meningkatkan akurasi prediksi.",
+        social: {}
+      },
+      {
+        name: "Firdaus Mu'afi",
+        id: "164221092",
+        image: "static/image/Afi.jpeg",
+        skills: ["HTML", "CSS", "UI/UX"],
+        description: "Mengembangkan komponen visual, responsivitas tampilan, dan memastikan pengalaman pengguna yang optimal.",
+        additionalInfo: "Mu'afi selalu memastikan UI aplikasi mudah digunakan dan efisien di berbagai perangkat.",
+        social: {}
+      },
+      {
+        name: "Naufal Izzah Ramadhan",
+        id: "164221087",
+        image: "static/image/Rama.jpeg",
+        skills: ["Flask","Deploy","API"],
+        description: "Bertanggung jawab untuk pengembangan backend, pengelolaan database, dan deployment aplikasi ke cloud.",
+        additionalInfo: "Ramadhan berperan penting dalam integrasi sistem serta menjaga keamanan dan stabilitas aplikasi.",
+        social: {}
+      },
+      {
+        name: "Billy Dawson",
+        id: "164221041",
+        image: "static/image/Billy.jpeg",
+        skills: ["Tensorflow", "ML/DeepL", "Python"],
+        description: "Bertugas dalam pengembangan model machine learning serta analisis data untuk mendukung akurasi prediksi.",
+        additionalInfo: "Billy fokus pada pengujian model dan pengolahan data agar hasil prediksi lebih andal.",
+        social: {}
+      }
+    ];
+
+
+    const memberModal = document.getElementById('memberModal');
+    const modalMemberName = document.getElementById('modalMemberName');
+    const modalMemberId = document.getElementById('modalMemberId');
+    const modalMemberSkills = document.getElementById('modalMemberSkills');
+    const modalMemberDescription = document.getElementById('modalMemberDescription');
+    const modalMemberAdditionalInfo = document.getElementById('modalMemberAdditionalInfo');
+    const modalMemberTwitter = document.getElementById('modalMemberTwitter');
+    const modalMemberLinkedIn = document.getElementById('modalMemberLinkedIn');
+    const modalMemberGitHub = document.getElementById('modalMemberGitHub');
+    const modalMemberImage = document.getElementById('modalMemberImage');
+
+    function openMemberModal(index) {
+      const member = teamMembersData[index];
+
+      modalMemberName.textContent = member.name;
+      modalMemberId.textContent = member.id;
+      modalMemberDescription.textContent = member.description;
+      modalMemberAdditionalInfo.textContent = member.additionalInfo;
+      modalMemberImage.src = member.image;
+      modalMemberImage.alt = "Foto " + member.name;
+
+
+      // Clear previous skills and add new ones
+      modalMemberSkills.innerHTML = '';
+      member.skills.forEach(skill => {
+        const span = document.createElement('span');
+        span.className = 'skill-tag'; // Reuse existing skill-tag style
+        span.textContent = skill;
+        modalMemberSkills.appendChild(span);
+      });
+
+      // Update social links (if available, otherwise hide or set to placeholder)
+      modalMemberTwitter.href = member.social.twitter || '#';
+      modalMemberLinkedIn.href = member.social.linkedin || '#';
+      modalMemberGitHub.href = member.social.github || '#';
+
+      memberModal.classList.add('active');
+    }
+
+    function closeMemberModal() {
+      memberModal.classList.remove('active');
+    }
+
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+      if (event.target == memberModal) {
+        closeMemberModal();
+      }
+    }
+
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

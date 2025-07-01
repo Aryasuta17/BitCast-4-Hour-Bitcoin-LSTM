@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Prediksi Bitcoin – CryptoPrediction</title>
+
+  <!-- Tailwind & Chart.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+  <!-- Google font & util CSS -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    body{font-family:'Inter',sans-serif}
+    
+    .prediction-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .prediction-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Bitcoin animation */
+    .bitcoin-spin {
+      animation: bitcoinSpin 3s linear infinite;
+    }
+    
+    @keyframes bitcoinSpin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    /* Stagger animation delays */
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in:nth-child(4) { animation-delay: 0.4s; }
+
+    /* Navbar hover effects */
+    .nav-link {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: currentColor;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    .prediction-button {
+      background: linear-gradient(135deg, #f7931a 0%, #ff6b35 100%);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .prediction-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+    
+    .prediction-button:hover::before {
+      left: 100%;
+    }
+    
+    .prediction-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(247, 147, 26, 0.4);
+    }
+    
+    .section-title {
+      background: linear-gradient(135deg, #f7931a 0%, #ff6b35 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .slide-up {
+      animation: slideUp 0.6s ease forwards;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-top: 5px solid #f7931a;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .bitcoin-info {
+      background: linear-gradient(135deg, rgba(247, 147, 26, 0.1) 0%, rgba(255, 107, 53, 0.1) 100%);
+      border: 1px solid rgba(247, 147, 26, 0.3);
+    }
+    
+    .pulse-glow {
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(247, 147, 26, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(247, 147, 26, 0.6); }
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-x-hidden">
+  <header class="bg-black/20 backdrop-blur-lg shadow-xl sticky top-0 z-50 border-b border-white/10">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <!-- Logo/Title -->
+        <div class="nav-link">
+          <a href="/" class="no-underline">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-pink-500 to-blue-500 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
+              ₿ITCAST
+            </h1>
+          </a>
+        </div>
+        
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex space-x-8 text-gray-300 font-medium">
+          <a href="/exchange" class="nav-link hover:text-yellow-400 transition duration-300 px-2 py-1">
+            Exchange
+          </a>
+          <a href="#" class=" text-pink-400 underline underline-offset-4">
+            Prediksi
+          </a>
+          <a href="/model" class="nav-link hover:text-purple-400 transition duration-300 px-2 py-1">
+            Model & Metodologi
+          </a>
+          <a href="/tentang" class="nav-link hover:text-pink-400 transition duration-300 px-2 py-1">
+            About
+          </a>
+          
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden text-white p-2" onclick="toggleMobileMenu()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <nav id="mobileMenu" class="md:hidden mt-4 space-y-2 hidden bg-black/40 backdrop-blur-lg rounded-lg p-4 border border-white/10">
+        <a href="/exchange" class="block text-gray-300 hover:text-yellow-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>💱</span>
+            <span>Exchange</span>
+          </span>
+        </a>
+        <a href="/prediksi" class="block text-gray-300 hover:text-pink-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🔮</span>
+            <span>Prediksi</span>
+          </span>
+        </a>
+        <a href="/model" class="block text-gray-300 hover:text-purple-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>🧠</span>
+            <span>Model & Metodologi</span>
+          </span>
+        </a>
+        <a href="/tentang" class="block text-gray-300 hover:text-blue-400 transition duration-300 py-3 px-2 rounded-lg hover:bg-white/10">
+          <span class="flex items-center space-x-2">
+            <span>ℹ️</span>
+            <span>About</span>
+          </span>
+        </a>
+        
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ MAIN ============ -->
+  <main class="min-h-screen py-8 pt-24">
+    <!-- Hero -->
+    <section class="py-12 px-4">
+      <div class="text-center mb-12">
+        <div class="flex items-center justify-center mb-6">
+          <span class="text-5xl md:text-7xl mr-4">🔮</span> 
+          <h2 class="text-4xl md:text-6xl font-bold bg-gradient-to-r from-orange-400 to-yellow-500 bg-clip-text text-transparent">
+            Prediksi Bitcoin
+          </h2>
+        </div>
+        <p class="text-gray-300 text-xl">Gunakan teknologi AI terdepan untuk memprediksi pergerakan harga Bitcoin (BTC) untuk masa depan</p>
+      </div>
+    </section>
+
+    <!-- Bitcoin Info Card -->
+    <section class="py-8 px-4">
+      <div class="container mx-auto">
+        <div class="max-w-4xl mx-auto">
+          <div class="bitcoin-info prediction-card p-8 mb-8 slide-up">
+            <div class="text-center mb-6">
+              <h2 class="text-3xl font-bold mb-4">
+                <span class="text-orange-400">₿</span> Bitcoin (BTC)
+              </h2>
+              <p class="text-gray-300 text-lg">
+                Cryptocurrency terpopuler dan terpercaya di dunia
+              </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+              <div class="text-center p-4 bg-white/5 rounded-lg">
+                <div class="text-2xl mb-2">🥇</div>
+                <h3 class="font-semibold text-orange-400">Rank #1</h3>
+                <p class="text-sm text-gray-400">Market Cap</p>
+              </div>
+              <div class="text-center p-4 bg-white/5 rounded-lg">
+                <div class="text-2xl mb-2">🚀</div>
+                <h3 class="font-semibold text-orange-400">Digital Gold</h3>
+                <p class="text-sm text-gray-400">Store of Value</p>
+              </div>
+              <div class="text-center p-4 bg-white/5 rounded-lg">
+                <div class="text-2xl mb-2">🔒</div>
+                <h3 class="font-semibold text-orange-400">Decentralized</h3>
+                <p class="text-sm text-gray-400">Blockchain</p>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <button id="predictButton"
+                class="prediction-button text-white font-bold py-4 px-12 rounded-full text-xl transition-all duration-300 pulse-glow relative">
+                <span class="relative z-10">🚀 Mulai Prediksi Bitcoin</span>
+              </button>
+              <p class="text-sm text-gray-400 mt-4">
+                Analisis AI berdasarkan data historis dan tren pasar terkini
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading -->
+    <section id="loadingSection" class="py-8 px-4 hidden">
+      <div class="container mx-auto text-center">
+        <div class="loading-spinner mx-auto mb-4"></div>
+        <p class="text-lg text-gray-300">Menganalisis data Bitcoin dengan AI...</p>
+        <p class="text-sm text-gray-400 mt-2">Memproses jutaan data point untuk prediksi akurat</p>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-12 px-4">
+      <div class="container mx-auto">
+        <div class="max-w-6xl mx-auto">
+          <h2 class="text-3xl font-bold text-center mb-12 section-title">
+            Mengapa Pilih Prediksi Bitcoin Kami?
+          </h2>
+          
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="prediction-card p-6 text-center fade-in">
+              <div class="text-4xl mb-4">🤖</div>
+              <h3 class="text-xl font-semibold mb-3 text-orange-400">AI Technology</h3>
+              <p class="text-gray-300">
+                Menggunakan machine learning terdepan untuk menganalisis pola harga Bitcoin
+              </p>
+            </div>
+            
+            <div class="prediction-card p-6 text-center fade-in">
+              <div class="text-4xl mb-4">📈</div>
+              <h3 class="text-xl font-semibold mb-3 text-orange-400">Prediksi</h3>
+              <p class="text-gray-300">
+                Dapatkan prediksi harga Bitcoin untuk masa depan dengan akurasi tinggi
+              </p>
+            </div>
+            
+            <div class="prediction-card p-6 text-center fade-in">
+              <div class="text-4xl mb-4">⚡</div>
+              <h3 class="text-xl font-semibold mb-3 text-orange-400">Real-Time Data</h3>
+              <p class="text-gray-300">
+                Analisis berdasarkan data pasar Bitcoin terbaru dan indikator teknikal
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="bg-black/20 border-t border-white/10 py-8 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-gray-400">© 2025 Bitcast. Prediksi cryptocurrency dengan AI.</p>
+    </div>
+  </footer>
+
+  <script>
+  function toggleMobileMenu(){
+    document.getElementById('mobileMenu')?.classList.toggle('hidden');
+  }
+
+  /* ---------- Main button - Redirect to results page ---------- */
+  document.getElementById('predictButton').addEventListener('click', async () => {
+    const symbol = 'BTC'; // Fixed to Bitcoin only
+
+    document.getElementById('loadingSection').classList.remove('hidden');
+    
+    // Scroll to loading section
+    document.getElementById('loadingSection').scrollIntoView({ 
+      behavior: 'smooth' 
+    });
+
+    try {
+      // Simulate loading time for better UX
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Check if prediction is available
+      const r = await fetch(`/api/predict/${symbol}`);
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || 'API error');
+
+      // Redirect to results page with symbol parameter
+      window.location.href = `/hasil?symbol=${symbol}`;
+
+    } catch (e) {
+      alert('Gagal mengambil prediksi Bitcoin: ' + e.message);
+      document.getElementById('loadingSection').classList.add('hidden');
+    }
+  });
+
+  /* ---------- Fade-in animation ---------- */
+  const obs = new IntersectionObserver((entries) =>
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.classList.add('fade-in');
+      }
+    }),
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
+  
+  document.querySelectorAll('.prediction-card').forEach(el => obs.observe(el));
+  
+  // Auto-trigger animations on load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.fade-in').forEach((el, index) => {
+        setTimeout(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, index * 200);
+      });
+    }, 500);
+  });
+  </script>
+</body>
+</html>
