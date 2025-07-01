@@ -63,7 +63,7 @@ Project ini sekaligus jadi playground untuk eksperimen ML ops, time series, dan 
 ## 🚦 Cara Menjalankan
 
 ```bash
-git clone https://github.com/yourusername/bitcast.git
+git clone https://github.com/Aryasuta17/bitcast.git
 cd bitcast
 pip install -r requirements.txt
 python app.py
