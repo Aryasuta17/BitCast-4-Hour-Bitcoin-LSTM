@@ -52,8 +52,10 @@ Project ini sekaligus jadi playground untuk eksperimen ML ops, time series, dan 
 
 ## 📷 Screenshot
 
+####  Tampilan Awal Data Real Time
 ![Bitcast Dashboard Example](assets/bitcast_dashboard2.png)  
 
+####  Tampilan Awal Prediksi
 ![Bitcast Dashboard Example](assets/bitcast_dashboard2.png)  
 
 ---
