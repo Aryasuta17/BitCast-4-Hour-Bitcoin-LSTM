@@ -1,6 +1,6 @@
 # ⚡ Bitcast: Bitcoin Price Forecasting & Analytics
 
-Bitcast adalah web app prediksi harga Bitcoin berbasis deep learning yang dikembangkan sebagai project personal. Bitcast memadukan data engineering, machine learning, dan otomatisasi—menyediakan visualisasi tren harga BTC dan prediksi secara real-time melalui antarmuka yang modern dan interaktif.
+Bitcast adalah web app prediksi harga Bitcoin berbasis deep learning yang dikembangkan sebagai project personal. Bitcast memadukan data engineering, machine learning, dan otomatisasi—menyediakan visualisasi tren harga BTC dan prediksi secara real-time melalui antarmuka yang modern dan interaktif dimana kami memiliki pretrain yang dapat digunakan dalam interval data 4 jam.
 
 ---
 
